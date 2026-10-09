@@ -45,9 +45,30 @@ html, body {
   will-change: transform;
 }
 
-/* Modo Zoom Dinâmico: aproxima a tela do game exibindo o visor ampliado */
+/* ==========================================================================
+   SISTEMA DE ZOOM DINÂMICO ADAPTATIVO (RETRATO & PAISAGEM)
+   - Retrato (Portrait): A tela do LCD ocupa ~95% da largura da tela (quase toda a largura),
+     mantendo os botões virtuais ao alcance dos polegares e o interruptor OFF/ON acessível.
+   - Paisagem (Landscape): O visor ocupa ~85% do espaço vertical útil na sua proporção real
+     nativa (320x278 / 1.151:1), centralizado com precisão matemática no meio do viewport.
+   ========================================================================== */
+
 #console-wrapper.zoomed {
-  transform: scale(1.75) translateY(10%);
+  transform: translateY(4%) scale(1.70);
+}
+
+/* Modo Retrato: tela do game preenche quase toda a largura da tela (~95vw) */
+@media (orientation: portrait) {
+  #console-wrapper.zoomed {
+    transform: translateY(4%) scale(1.70);
+  }
+}
+
+/* Modo Paisagem: tela do game ocupa ~85% da altura útil em proporção real (320x278) centralizada */
+@media (orientation: landscape) {
+  #console-wrapper.zoomed {
+    transform: translateY(19.35%) scale(3.11);
+  }
 }
 
 #console-image {
@@ -269,6 +290,16 @@ html, body {
   bottom: -150%;
   left: -20%;
   right: -80%;
+}
+
+/* No modo paisagem ampliado, estende a hitbox para baixo e para a direita no topo do viewport */
+@media (orientation: landscape) {
+  #console-wrapper.zoomed #btn-power-switch::before {
+    top: -50%;
+    bottom: -320%;
+    left: -50%;
+    right: -150%;
+  }
 }
 
 /* ==========================================================================
