@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Guana-Boy</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+</head>
+<body>
+
+  <!-- Console Retrô Centralizado Ocupando 100% da Altura Vertical -->
+  <div id="console-wrapper">
+    <!-- Imagem da Carcaça do Game Boy -->
+    <img id="console-image" src="./images/console.png" alt="Console Guana-Boy" draggable="false">
+
+    <!-- Visor LCD (Canvas 320x278 com proporção idêntica à tela do console.png) -->
+    <div id="screen-container">
+      <canvas id="game-screen" width="320" height="278"></canvas>
+    </div>
+
+    <!-- Botões Virtuais Táteis Mapeados sobre a Carcaça -->
+    <button id="dpad-up" class="touch-btn dpad-btn" aria-label="D-Pad Cima (Pular)" title="Pular"></button>
+    <button id="dpad-left" class="touch-btn dpad-btn" aria-label="D-Pad Esquerda" tabindex="-1"></button>
+    <button id="dpad-right" class="touch-btn dpad-btn" aria-label="D-Pad Direita" tabindex="-1"></button>
+    <button id="dpad-down" class="touch-btn dpad-btn" aria-label="D-Pad Baixo" tabindex="-1"></button>
+
+    <button id="btn-b" class="touch-btn action-btn" aria-label="Botão B (Pular)" title="Pular"></button>
+    <button id="btn-a" class="touch-btn action-btn" aria-label="Botão A (Pular)" title="Pular"></button>
+
+    <button id="btn-select" class="touch-btn option-btn" aria-label="Select" title="Select"></button>
+    <button id="btn-start" class="touch-btn option-btn" aria-label="Start (Iniciar/Pausar)" title="Start"></button>
+  </div>
+
+  <!-- Menu Flutuante Inferior (Aba "MENU" retrô expansível com ícones bitmap) -->
+  <aside id="floating-menu" class="floating-menu" aria-label="Menu Flutuante">
+    <!-- Aba retrô inferior sempre visível -->
+    <button id="menu-tab" class="menu-tab" aria-expanded="false" aria-controls="menu-panel" title="Menu">
+      <span class="menu-tab-chevron">▲</span>
+      <span class="menu-tab-text">MENU</span>
+    </button>
+
+    <!-- Painel Expansível de Opções com Ícones Bitmap -->
+    <div id="menu-panel" class="menu-panel">
+      <!-- Botão: Play / Pause (Iniciar, Pausar e Retomar) -->
+      <button id="btn-toggle-play" class="menu-btn" title="Play / Pausar Jogo" aria-label="Play / Pausar">
+        <img id="play-pause-icon-img" src="./images/icons/icon-play.png" class="bitmap-icon" alt="Play/Pause">
+      </button>
+
+      <div class="menu-separator"></div>
+
+      <!-- Botão: Alternar Zoom (Aproximar tela do game) -->
+      <button id="btn-toggle-zoom" class="menu-btn" title="Alternar Zoom da Tela" aria-label="Alternar Zoom">
+        <img id="zoom-icon-img" src="./images/icons/icon-zoom-in.png" class="bitmap-icon" alt="Zoom">
+      </button>
+
+      <!-- Botão: Ligar/Desligar Som -->
+      <button id="btn-toggle-sound" class="menu-btn" title="Ligar/Desligar Som" aria-label="Ligar/Desligar Som">
+        <img id="sound-icon-img" src="./images/icons/icon-sound-on.png" class="bitmap-icon" alt="Som">
+      </button>
+
+      <!-- Botão: Reiniciar o Jogo -->
+      <button id="btn-restart-game" class="menu-btn" title="Reiniciar Jogo" aria-label="Reiniciar Jogo">
+        <img src="./images/icons/icon-restart.png" class="bitmap-icon" alt="Reiniciar Jogo">
+      </button>
+
+      <!-- Botão: Limpar Recorde (requer confirmação) -->
+      <button id="btn-clear-record" class="menu-btn" title="Limpar Placar de Recorde" aria-label="Limpar Placar de Recorde">
+        <img src="./images/icons/icon-clear-record.png" class="bitmap-icon" alt="Limpar Recorde">
+      </button>
+
+      <!-- Caixa Flutuante de Confirmação para Limpeza de Recorde -->
+      <div id="confirm-record-dialog" class="confirm-dialog hidden" role="dialog" aria-label="Confirmar Limpeza de Recorde">
+        <span class="confirm-prompt-badge">?</span>
+        <button id="btn-confirm-clear" class="menu-btn confirm-btn" title="Confirmar" aria-label="Confirmar">
+          <img src="./images/icons/icon-confirm.png" class="bitmap-icon" alt="Confirmar">
+        </button>
+        <button id="btn-cancel-clear" class="menu-btn cancel-btn" title="Cancelar" aria-label="Cancelar">
+          <img src="./images/icons/icon-cancel.png" class="bitmap-icon" alt="Cancelar">
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Ponto de Entrada da Engine via ES Modules Nativos -->
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
