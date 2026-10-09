@@ -182,22 +182,31 @@ export class InputManager {
       const el = document.getElementById(id);
       if (!el) return;
 
+      let lastTrigger = 0;
       const handleDown = (e) => {
-        e.preventDefault();
+        const now = performance.now();
+        if (now - lastTrigger < 200) return;
+        lastTrigger = now;
+
+        if (e.cancelable) e.preventDefault();
         el.classList.add('active');
         this.vibrate(10);
-        try {
-          el.setPointerCapture(e.pointerId);
-        } catch (_) {}
+        if (e.pointerId !== undefined) {
+          try {
+            el.setPointerCapture(e.pointerId);
+          } catch (_) {}
+        }
         if (onDown) onDown(e);
       };
 
       const handleUp = (e) => {
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault();
         el.classList.remove('active');
-        try {
-          el.releasePointerCapture(e.pointerId);
-        } catch (_) {}
+        if (e.pointerId !== undefined) {
+          try {
+            el.releasePointerCapture(e.pointerId);
+          } catch (_) {}
+        }
         if (onUp) onUp(e);
       };
 
@@ -210,6 +219,11 @@ export class InputManager {
           if (onUp) onUp(e);
         }
       });
+
+      // Suporte explícito a eventos Touch nativos para telas de celular
+      el.addEventListener('touchstart', handleDown, { passive: false });
+      el.addEventListener('touchend', handleUp, { passive: false });
+      el.addEventListener('touchcancel', handleUp, { passive: false });
     };
 
     // Botões de pulo com multi-touch tracking independente

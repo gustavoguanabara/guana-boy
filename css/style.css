@@ -238,6 +238,37 @@ html, body {
   width: 23.38%;
   height: 5.38%;
   border-radius: 12px;
+  touch-action: none;
+}
+
+/* Área de toque expandida para dedos em telas de celular (Hitbox Ultra-Sensível) */
+#btn-power-switch::before {
+  content: '';
+  position: absolute;
+  top: -100%;
+  bottom: -80%;
+  left: -50%;
+  right: -40%;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Em dispositivos touch/mobile, cobre generosamente todo o quadrante superior esquerdo */
+@media (hover: none) and (pointer: coarse) {
+  #btn-power-switch::before {
+    top: -120%;
+    bottom: -100%;
+    left: -60%;
+    right: -50%;
+  }
+}
+
+/* Quando no modo Zoom (ON), garante alcance confortável do toque para retornar */
+#console-wrapper.zoomed #btn-power-switch::before {
+  top: -20%;
+  bottom: -150%;
+  left: -20%;
+  right: -80%;
 }
 
 /* ==========================================================================
