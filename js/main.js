@@ -109,6 +109,11 @@ async function init() {
     floatingMenu.updateSoundUI();
   });
 
+  // Alterna o zoom da tela quando acionado pelo interruptor OFF/ON ou tecla Z
+  input.on('toggle_zoom', () => {
+    floatingMenu.toggleZoom();
+  });
+
   // Ativa modo smoke test caso solicitado na query string (?smoke=1)
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('smoke') || urlParams.has('test')) {

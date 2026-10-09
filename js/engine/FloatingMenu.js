@@ -199,18 +199,28 @@ export class FloatingMenu {
     this.isZoomed = !this.isZoomed;
     this.updateZoomUI();
     this.audio.playMenuBeep(this.isZoomed);
+    this._vibrate(10);
   }
 
   updateZoomUI() {
     if (!this.consoleWrapper || !this.zoomIconImg) return;
+    const powerBtn = document.getElementById('btn-power-switch');
     if (this.isZoomed) {
       this.consoleWrapper.classList.add('zoomed');
       this.zoomIconImg.src = ASSET_PATHS.ICONS.ZOOM_OUT;
       this.btnToggleZoom?.classList.add('active-zoom');
+      if (powerBtn) {
+        powerBtn.title = 'Desligar Zoom da Tela (Retornar Console Completo)';
+        powerBtn.setAttribute('aria-label', 'Desligar Zoom da Tela (Retornar Console Completo)');
+      }
     } else {
       this.consoleWrapper.classList.remove('zoomed');
       this.zoomIconImg.src = ASSET_PATHS.ICONS.ZOOM_IN;
       this.btnToggleZoom?.classList.remove('active-zoom');
+      if (powerBtn) {
+        powerBtn.title = 'Ligar Zoom da Tela (Aproximar Visor do Game)';
+        powerBtn.setAttribute('aria-label', 'Ligar Zoom da Tela (Aproximar Visor do Game)');
+      }
     }
   }
 

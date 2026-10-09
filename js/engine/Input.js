@@ -128,6 +128,11 @@ export class InputManager {
         this.vibrate(10);
         this._emit('mute');
         e.preventDefault();
+      } else if (e.code === 'KeyZ') {
+        this._setButtonActive('btn-power-switch', true);
+        this.vibrate(10);
+        this._emit('toggle_zoom');
+        e.preventDefault();
       } else if (e.code === 'Enter') {
         this._setButtonActive('btn-start', true);
         this.vibrate(10);
@@ -164,6 +169,9 @@ export class InputManager {
         e.preventDefault();
       } else if (e.code === 'KeyM') {
         this._setButtonActive('btn-select', false);
+        e.preventDefault();
+      } else if (e.code === 'KeyZ') {
+        this._setButtonActive('btn-power-switch', false);
         e.preventDefault();
       }
     });
@@ -223,6 +231,11 @@ export class InputManager {
     // Botão SELECT
     attachButton('btn-select', () => {
       this._emit('mute');
+    });
+
+    // Interruptor Virtual OFF/ON no Topo Esquerdo (Alternar Zoom da Tela)
+    attachButton('btn-power-switch', () => {
+      this._emit('toggle_zoom');
     });
   }
 
