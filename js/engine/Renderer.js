@@ -3,7 +3,7 @@
  * Baseado no Technical Requirement Document (TRD)
  */
 
-import { CANVAS_WIDTH, CANVAS_HEIGHT, GameState } from '../utils/Constants.js';
+import { CANVAS_WIDTH, CANVAS_HEIGHT, GameState, APP_VERSION } from '../utils/Constants.js';
 
 export class Renderer {
   constructor(canvas) {
@@ -62,15 +62,18 @@ export class Renderer {
   }
 
   /**
-   * Renderiza a tela de boas-vindas / início com tipografia ampliada
+   * Renderiza a tela de boas-vindas / início com tipografia ampliada e versão do app
    */
-  renderReadyScreen() {
+  renderReadyScreen(version = APP_VERSION) {
     this.ctx.save();
     this.ctx.fillStyle = '#14180d';
     this.ctx.textAlign = 'center';
 
     this.ctx.font = 'bold 26px "Courier New", Courier, monospace';
     this.ctx.fillText('GUANA-BOY', CANVAS_WIDTH / 2, 75);
+
+    this.ctx.font = 'bold 11px "Courier New", Courier, monospace';
+    this.ctx.fillText(version, CANVAS_WIDTH / 2, 94);
 
     this.ctx.font = 'bold 13px "Courier New", Courier, monospace';
     this.ctx.fillText('PRESSIONE START OU ESPAÇO', CANVAS_WIDTH / 2, 130);
