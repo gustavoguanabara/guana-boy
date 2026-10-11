@@ -5,7 +5,7 @@
 
 export const CANVAS_WIDTH = 320;
 export const CANVAS_HEIGHT = 278;
-export const APP_VERSION = 'v1.0.5';
+export const APP_VERSION = 'v1.0.9';
 
 export const PHYSICS = {
   GRAVITY: 1750,                 // px/s²
