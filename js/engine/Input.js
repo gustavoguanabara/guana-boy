@@ -25,6 +25,15 @@ export class InputManager {
     } catch (_) {}
   }
 
+  /**
+   * Dispara uma vibração tátil forte e contundente (para colisões e impacto com obstáculos)
+   * Supera a inércia mecânica dos atuadores de celulares com padrão composto vigoroso
+   * @param {number|number[]} [pattern=[220, 70, 220]] Duração ou padrão em ms
+   */
+  vibrateStrong(pattern = [220, 70, 220]) {
+    this.vibrate(pattern);
+  }
+
   on(event, callback) {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, []);
@@ -40,14 +49,13 @@ export class InputManager {
   }
 
   _setupGlobalInteractions() {
-    // Desbloqueio universal do AudioContext no primeiro toque/clique
+    // Desbloqueio universal do AudioContext e bypass de áudio silencioso no primeiro toque/clique
+    const unlockEvents = ['pointerdown', 'touchstart', 'touchend', 'mousedown', 'keydown'];
     const unlockAudio = () => {
       this._emit('user_interacted');
-      window.removeEventListener('pointerdown', unlockAudio);
-      window.removeEventListener('touchstart', unlockAudio);
+      unlockEvents.forEach(evt => window.removeEventListener(evt, unlockAudio));
     };
-    window.addEventListener('pointerdown', unlockAudio, { passive: true });
-    window.addEventListener('touchstart', unlockAudio, { passive: true });
+    unlockEvents.forEach(evt => window.addEventListener(evt, unlockAudio, { passive: true }));
 
     // Previne menu de contexto nativo do navegador em toques longos
     const consoleWrapper = document.getElementById('console-wrapper');

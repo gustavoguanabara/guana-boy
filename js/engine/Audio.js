@@ -3,6 +3,11 @@
  * Baseado no Technical Requirement Document (TRD), ADR-0004 e ADR-0011
  */
 
+// Data URI de áudio WAV PCM 8-bit mono de 80 amostras silenciosas (168 bytes base64)
+// Utilizado para comutar o motor de áudio mobile para AVAudioSessionCategoryPlayback (iOS / Android)
+// permitindo a reprodução de som mesmo com o botão físico de silencioso/vibrar ligado.
+const SILENT_WAV_URI = 'data:audio/wav;base64,UklGRnQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVAAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==';
+
 export class AudioManager {
   constructor() {
     this.ctx = null;
@@ -10,12 +15,64 @@ export class AudioManager {
     this.muted = false;
     this.masterGain = null;
     this.isInitialized = false;
+    this.silentAudioElement = null;
+    this._silentBypassActive = false;
+    this._setupVisibilityListener();
+  }
+
+  /**
+   * Cria e ativa o elemento de áudio silencioso para contornar o modo mudo/silencioso mobile (iOS/Android)
+   */
+  _initSilentBypass() {
+    if (this.silentAudioElement) {
+      if (!this.muted && this.silentAudioElement.paused) {
+        this.silentAudioElement.play().catch(() => {});
+      }
+      return;
+    }
+
+    try {
+      if (typeof Audio !== 'undefined') {
+        const audio = new Audio();
+        audio.src = SILENT_WAV_URI;
+        audio.loop = true;
+        audio.autoplay = false;
+        audio.preload = 'auto';
+        audio.volume = 0.01;
+        audio.setAttribute('playsinline', 'true');
+        audio.setAttribute('webkit-playsinline', 'true');
+
+        // Tenta iniciar a reprodução no contexto do gesto de usuário
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            this._silentBypassActive = true;
+          }).catch(() => {});
+        }
+        this.silentAudioElement = audio;
+      }
+    } catch (_) {}
+  }
+
+  /**
+   * Monitora a alternância de visibilidade da aba para reativar o contexto e bypass de som
+   */
+  _setupVisibilityListener() {
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && !this.muted) {
+          this._ensureContext();
+        }
+      });
+    }
   }
 
   /**
    * Inicializa o AudioContext no primeiro gesto do usuário
    */
   init() {
+    this._initSilentBypass();
+
     if (this.isInitialized && this.ctx) {
       if (this.ctx.state === 'suspended') {
         this.ctx.resume().catch(() => {});
@@ -54,6 +111,9 @@ export class AudioManager {
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume().catch(() => {});
     }
+    if (this.silentAudioElement && !this.muted && this.silentAudioElement.paused) {
+      this.silentAudioElement.play().catch(() => {});
+    }
     if (this.masterGain && this.ctx) {
       const volume = this.muted ? 0 : 0.25;
       this.masterGain.gain.setValueAtTime(volume, this.ctx.currentTime);
@@ -70,6 +130,13 @@ export class AudioManager {
     if (this.masterGain && this.ctx) {
       this.masterGain.gain.setValueAtTime(this.muted ? 0 : 0.25, this.ctx.currentTime);
     }
+    if (this.silentAudioElement) {
+      if (this.muted) {
+        this.silentAudioElement.pause();
+      } else {
+        this.silentAudioElement.play().catch(() => {});
+      }
+    }
     if (!this.muted) {
       this.playMenuBeep(true);
     }
@@ -85,6 +152,13 @@ export class AudioManager {
     this.muted = !!isMuted;
     if (this.masterGain && this.ctx) {
       this.masterGain.gain.setValueAtTime(this.muted ? 0 : 0.25, this.ctx.currentTime);
+    }
+    if (this.silentAudioElement) {
+      if (this.muted) {
+        this.silentAudioElement.pause();
+      } else {
+        this.silentAudioElement.play().catch(() => {});
+      }
     }
     return this.muted;
   }

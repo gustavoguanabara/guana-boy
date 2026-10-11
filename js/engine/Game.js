@@ -163,7 +163,7 @@ export class Game {
       StorageService.setHighScore(this.highScore);
     }
     this.audio.playGameOver();
-    this.input?.vibrate([40, 40, 70]);
+    this.input?.vibrateStrong([260, 80, 260]);
     this._emitStateChange();
   }
 
@@ -221,7 +221,7 @@ export class Game {
         const tookDamage = this.player.takeDamage();
         if (tookDamage) {
           this.audio.playHit();
-          this.input?.vibrate(45);
+          this.input?.vibrateStrong([220, 70, 220]);
           if (this.player.lives <= 0) {
             this.gameOver();
             break;
